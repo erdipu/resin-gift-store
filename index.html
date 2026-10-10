@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LuxeCraft Studio | Handcrafted Resin Art, Couple Frames & Photo Clocks</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fdfbf7',
+              100: '#f9f5ec',
+              200: '#f4ebd7',
+              300: '#ebd7b1',
+              400: '#debf84',
+              500: '#c69b4e', // Primary Gold
+              600: '#a67d38',
+              700: '#845f2a',
+              800: '#6d4d25',
+              900: '#583f20',
+            },
+            cream: '#faf8f5',
+            dark: '#1c1917',
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Supabase Cloud Database & Auth SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#faf8f5] text-stone-800 antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-gradient-to-r from-stone-900 via-stone-800 to-stone-900 text-stone-200 text-xs py-2 px-4 text-center tracking-wide font-medium flex items-center justify-center gap-3">
+    <span class="inline-flex items-center gap-1 text-amber-300">
+      <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Special Gift Offer:
+    </span>
+    <span>Free Wooden Display Stand & Premium Gift Packaging on all custom orders today!</span>
+  </div>
+
+  <!-- Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-stone-200 transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-200 p-[2px] shadow-sm group-hover:scale-105 transition">
+          <div class="w-full h-full bg-stone-900 rounded-full flex items-center justify-center text-amber-300 font-serif font-bold text-xl">
+            L
+          </div>
+        </div>
+        <div>
+          <span class="font-serif text-2xl font-bold tracking-tight text-stone-900 block leading-tight">LuxeCraft</span>
+          <span class="text-[10px] tracking-[0.25em] text-brand-600 uppercase font-semibold block">Artisan Keepsakes</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="hidden lg:flex items-center gap-6 text-sm font-medium text-stone-700">
+        <a href="#catalog" class="hover:text-brand-600 transition" onclick="filterCategory('all')">Collections</a>
+        <a href="#catalog" class="hover:text-brand-600 transition" onclick="filterCategory('resin')">Resin Art</a>
+        <a href="#catalog" class="hover:text-brand-600 transition" onclick="filterCategory('couple')">Couple Frames</a>
+        <a href="#catalog" class="hover:text-brand-600 transition" onclick="filterCategory('clock')">Photo Clocks</a>
+        <a href="#portfolio" class="hover:text-brand-600 transition text-amber-700 font-semibold flex items-center gap-1">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Past Works Gallery
+        </a>
+        <a href="#how-it-works" class="hover:text-brand-600 transition">Process</a>
+      </nav>
+
+      <!-- Action Buttons & Auth -->
+      <div class="flex items-center gap-3">
+        
+        <!-- Seller Portal (Admin) Button -->
+        <button onclick="openAdminModal()" 
+                class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-amber-900 bg-amber-100/80 hover:bg-amber-200 border border-amber-300 rounded-full transition" 
+                title="Seller Admin Panel">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-700"></i>
+          <span>Seller Portal</span>
+        </button>
+
+        <!-- Customer Auth State Container -->
+        <div id="authNavContainer">
+          <!-- Dynamically populated via app.js (Login button or User avatar dropdown) -->
+          <button onclick="openAuthModal('login')" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-stone-700 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 rounded-full transition">
+            <i data-lucide="user" class="w-4 h-4"></i>
+            <span>Sign In</span>
+          </button>
+        </div>
+
+        <!-- WhatsApp Support -->
+        <a href="https://wa.me/918789332585?text=Hi%20LuxeCraft,%20I%20want%20to%20customize%20a%20photo%20gift!" target="_blank" 
+           class="hidden xl:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-full transition">
+          <i data-lucide="message-circle" class="w-4 h-4 text-emerald-600"></i>
+          <span>WhatsApp (+91 8789332585)</span>
+        </a>
+
+        <!-- Cart Trigger Button -->
+        <button id="cartBtn" class="relative p-2.5 rounded-full hover:bg-stone-100 transition text-stone-800" aria-label="Open Cart">
+          <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+          <span id="cartCountBadge" class="absolute -top-1 -right-1 bg-brand-500 text-white font-bold text-[11px] w-5 h-5 rounded-full flex items-center justify-center shadow-md scale-0 transition-transform">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden pt-12 pb-20 bg-gradient-to-b from-amber-50/40 via-stone-50 to-[#faf8f5]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- Left Content -->
+        <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100/70 border border-amber-300 text-brand-800 text-xs font-semibold uppercase tracking-wider">
+            <i data-lucide="heart" class="w-3.5 h-3.5 fill-amber-500 text-amber-500"></i>
+            Handcrafted With Your Cherished Photos
+          </div>
+
+          <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-extrabold text-stone-900 leading-[1.15]">
+            Preserve Your Most <br class="hidden sm:inline" />
+            <span class="italic text-brand-600 font-normal">Precious Moments</span> in Art.
+          </h1>
+
+          <p class="text-stone-600 text-base sm:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal">
+            Custom high-gloss <strong>epoxy resin photo keepsakes</strong>, romantic <strong>LED couple frames</strong>, and <strong>custom framing wall clocks</strong>. Hand-poured with real preserved flowers and 24K gold foil flakes.
+          </p>
+
+          <!-- Quick Action Buttons -->
+          <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+            <button onclick="openCustomizerWithDefault()" class="w-full sm:w-auto px-8 py-4 rounded-xl gold-gradient-btn text-white font-semibold shadow-lg shadow-amber-500/25 flex items-center justify-center gap-2.5 group">
+              <i data-lucide="sparkles" class="w-5 h-5 group-hover:rotate-12 transition"></i>
+              <span>Customize Your Photo Gift</span>
+            </button>
+            <a href="#portfolio" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-white border border-stone-300 hover:border-brand-500 text-stone-700 font-medium hover:text-brand-600 transition text-center shadow-sm">
+              View Past Works Gallery
+            </a>
+          </div>
+
+          <!-- Trust Badges -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-stone-200/80 text-left">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700 shrink-0">
+                <i data-lucide="image" class="w-5 h-5"></i>
+              </div>
+              <div class="text-xs">
+                <div class="font-bold text-stone-800">Live Preview</div>
+                <div class="text-stone-500">Before You Buy</div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700 shrink-0">
+                <i data-lucide="shield-check" class="w-5 h-5"></i>
+              </div>
+              <div class="text-xs">
+                <div class="font-bold text-stone-800">100% Epoxy</div>
+                <div class="text-stone-500">Non-Yellowing UV</div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700 shrink-0">
+                <i data-lucide="message-square" class="w-5 h-5"></i>
+              </div>
+              <div class="text-xs">
+                <div class="font-bold text-stone-800">WhatsApp Preview</div>
+                <div class="text-stone-500">Approval Guaranteed</div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-lg bg-amber-100 flex items-center justify-center text-amber-700 shrink-0">
+                <i data-lucide="package-check" class="w-5 h-5"></i>
+              </div>
+              <div class="text-xs">
+                <div class="font-bold text-stone-800">Zero-Breakage</div>
+                <div class="text-stone-500">Triple Layer Box</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Hero Interactive Showcase -->
+        <div class="lg:col-span-5 relative">
+          <div class="relative mx-auto max-w-sm sm:max-w-md">
+            
+            <div class="absolute -inset-4 bg-gradient-to-tr from-amber-300/30 to-rose-200/40 rounded-3xl blur-2xl -z-10"></div>
+            
+            <!-- Showcase Card -->
+            <div class="bg-white p-6 rounded-3xl shadow-2xl border border-stone-100 relative">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-semibold uppercase tracking-wider text-brand-600 bg-amber-50 px-2.5 py-1 rounded-full">Interactive Customizer</span>
+                <span class="text-xs text-stone-400 flex items-center gap-1">
+                  <i data-lucide="eye" class="w-3.5 h-3.5"></i> Live Real-Time View
+                </span>
+              </div>
+
+              <!-- Interactive Mini Preview Container -->
+              <div class="relative w-full aspect-square rounded-2xl bg-stone-900 overflow-hidden flex items-center justify-center shadow-inner border border-stone-800/20">
+                
+                <div class="w-[85%] h-[85%] rounded-full relative overflow-hidden resin-gloss shadow-2xl border-4 border-amber-300/40">
+                  <img id="heroPreviewImg" src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=800&q=80" alt="Couple Preview" class="w-full h-full object-cover">
+                  <div class="gold-foil-particles"></div>
+                  <div class="absolute inset-0 rounded-full border-[12px] border-amber-100/20 pointer-events-none"></div>
+                  <div class="absolute bottom-6 inset-x-0 text-center px-4 z-10">
+                    <span class="font-script text-white text-2xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] block">Kabir & Ananya</span>
+                    <span class="text-[11px] tracking-widest text-amber-200 uppercase font-semibold drop-shadow">Forever & Always • 24.11.2023</span>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Quick Demo Switcher -->
+              <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500">
+                <span>Featured: 10" Floral Resin Disc</span>
+                <button onclick="openCustomizerWithDefault()" class="text-brand-600 font-bold hover:underline flex items-center gap-1">
+                  Open Customizer Studio <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Floating Pill -->
+            <div class="absolute -bottom-5 -left-4 bg-white px-4 py-3 rounded-2xl shadow-xl border border-stone-100 flex items-center gap-3 animate-bounce" style="animation-duration: 4s;">
+              <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                <i data-lucide="check-check" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-stone-800">4.9/5 Rating</div>
+                <div class="text-[11px] text-stone-500">Over 1,200+ Happy Couples</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <!-- STOREFRONT MASONRY PORTFOLIO GALLERY (NEW)    -->
+  <!-- ============================================== -->
+  <section id="portfolio" class="py-16 bg-white border-b border-stone-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+        <div>
+          <span class="text-xs font-bold text-brand-600 tracking-wider uppercase flex items-center gap-1.5">
+            <i data-lucide="sparkles" class="w-4 h-4"></i> Artisan Portfolio & Inspiration
+          </span>
+          <h2 class="font-serif text-3xl sm:text-4xl font-bold text-stone-900 mt-1">Recent Custom Creations</h2>
+          <p class="text-stone-500 text-sm mt-1 max-w-xl">
+            Real custom gifts handcrafted by our studio for real couples. Click on any design to inspect the fine resin details or order a similar piece!
+          </p>
+        </div>
+
+        <!-- Filter Chips -->
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="filterGallery('all')" class="gal-filter-btn active px-3.5 py-1.5 text-xs font-semibold rounded-full bg-stone-900 text-white transition" data-gcat="all">All Works</button>
+          <button onclick="filterGallery('ready')" class="gal-filter-btn px-3.5 py-1.5 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-300 transition flex items-center gap-1" data-gcat="ready">
+            <i data-lucide="zap" class="w-3.5 h-3.5 text-emerald-600"></i>
+            <span>⚡ Ready to Ship (Buy As-Is)</span>
+          </button>
+          <button onclick="filterGallery('resin')" class="gal-filter-btn px-3.5 py-1.5 text-xs font-medium rounded-full bg-stone-100 text-stone-700 hover:bg-stone-200 transition" data-gcat="resin">Resin Keepsakes</button>
+          <button onclick="filterGallery('clock')" class="gal-filter-btn px-3.5 py-1.5 text-xs font-medium rounded-full bg-stone-100 text-stone-700 hover:bg-stone-200 transition" data-gcat="clock">Photo Clocks</button>
+          <button onclick="filterGallery('couple')" class="gal-filter-btn px-3.5 py-1.5 text-xs font-medium rounded-full bg-stone-100 text-stone-700 hover:bg-stone-200 transition" data-gcat="couple">Couple LED Frames</button>
+        </div>
+      </div>
+
+      <!-- Masonry Grid Container -->
+      <div id="masonryGalleryContainer" class="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
+        <!-- Dynamically rendered via app.js -->
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Category Filter & Product Grid Section -->
+  <section id="catalog" class="py-14 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+      <div>
+        <span class="text-xs font-bold text-brand-600 tracking-wider uppercase">Our Online Store</span>
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-stone-900 mt-1">Shop Ready Stock & Custom Art</h2>
+      </div>
+
+      <!-- Filter Buttons -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button onclick="filterCategory('all')" class="cat-filter-btn active px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-full bg-stone-900 text-white transition" data-cat="all">All Products</button>
+        <button onclick="filterCategory('ready')" class="cat-filter-btn px-3.5 py-2 text-xs sm:text-sm font-bold rounded-full bg-emerald-100 text-emerald-900 hover:bg-emerald-200 border border-emerald-300 transition flex items-center gap-1.5" data-cat="ready">
+          <i data-lucide="zap" class="w-4 h-4 text-emerald-700"></i>
+          <span>Ready to Ship (No Photo Needed)</span>
+        </button>
+        <button onclick="filterCategory('custom')" class="cat-filter-btn px-3.5 py-2 text-xs sm:text-sm font-medium rounded-full bg-amber-50 text-amber-900 hover:bg-amber-100 border border-amber-200 transition flex items-center gap-1" data-cat="custom">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-600"></i>
+          <span>Custom Photo Keepsakes</span>
+        </button>
+        <button onclick="filterCategory('resin')" class="cat-filter-btn px-3.5 py-2 text-xs sm:text-sm font-medium rounded-full bg-white text-stone-700 hover:bg-stone-100 border border-stone-200 transition" data-cat="resin">Resin Art</button>
+        <button onclick="filterCategory('clock')" class="cat-filter-btn px-3.5 py-2 text-xs sm:text-sm font-medium rounded-full bg-white text-stone-700 hover:bg-stone-100 border border-stone-200 transition" data-cat="clock">Photo Clocks</button>
+        <button onclick="filterCategory('couple')" class="cat-filter-btn px-3.5 py-2 text-xs sm:text-sm font-medium rounded-full bg-white text-stone-700 hover:bg-stone-100 border border-stone-200 transition" data-cat="couple">Couple Frames</button>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Dynamically generated via app.js -->
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section id="how-it-works" class="py-16 bg-white border-y border-stone-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-bold text-brand-600 tracking-widest uppercase">Simple 4-Step Process</span>
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-stone-900 mt-1">How We Create Your Keepsake</h2>
+        <p class="text-stone-500 text-sm sm:text-base mt-2">From raw high-clarity resin to a finished luxury masterpiece on your wall.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        
+        <div class="bg-stone-50 p-6 rounded-2xl border border-stone-100 relative group hover:bg-amber-50/50 transition">
+          <div class="w-12 h-12 rounded-xl bg-amber-100 text-brand-700 flex items-center justify-center font-bold text-lg mb-4 font-serif">1</div>
+          <h3 class="font-bold text-stone-900 text-lg mb-2">Upload Photo & Text</h3>
+          <p class="text-stone-600 text-sm leading-relaxed">Choose your product, upload any high-res couple photo, and type names, dates or special vows.</p>
+        </div>
+
+        <div class="bg-stone-50 p-6 rounded-2xl border border-stone-100 relative group hover:bg-amber-50/50 transition">
+          <div class="w-12 h-12 rounded-xl bg-amber-100 text-brand-700 flex items-center justify-center font-bold text-lg mb-4 font-serif">2</div>
+          <h3 class="font-bold text-stone-900 text-lg mb-2">Instant Live Preview</h3>
+          <p class="text-stone-600 text-sm leading-relaxed">Preview exactly how your photo looks inside the resin disk, clock dial, or warm backlit LED frame.</p>
+        </div>
+
+        <div class="bg-stone-50 p-6 rounded-2xl border border-stone-100 relative group hover:bg-amber-50/50 transition">
+          <div class="w-12 h-12 rounded-xl bg-amber-100 text-brand-700 flex items-center justify-center font-bold text-lg mb-4 font-serif">3</div>
+          <h3 class="font-bold text-stone-900 text-lg mb-2">Handcrafted Resin Pour</h3>
+          <p class="text-stone-600 text-sm leading-relaxed">Our artisans hand-pour premium UV-resistant epoxy with real preserved flowers and gold flakes over 48 hours.</p>
+        </div>
+
+        <div class="bg-stone-50 p-6 rounded-2xl border border-stone-100 relative group hover:bg-amber-50/50 transition">
+          <div class="w-12 h-12 rounded-xl bg-amber-100 text-brand-700 flex items-center justify-center font-bold text-lg mb-4 font-serif">4</div>
+          <h3 class="font-bold text-stone-900 text-lg mb-2">WhatsApp Approval & Delivery</h3>
+          <p class="text-stone-600 text-sm leading-relaxed">We send real video footage of your finished item on WhatsApp before express dispatch in safety crates.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Customer Reviews Section -->
+  <section id="reviews" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <span class="text-xs font-bold text-brand-600 tracking-widest uppercase">Love Stories & Reviews</span>
+      <h2 class="font-serif text-3xl sm:text-4xl font-bold text-stone-900 mt-1">Loved by Over 1,200+ Couples</h2>
+      <p class="text-stone-500 text-sm mt-2">See real customer unboxing experiences and verified gifting reviews.</p>
+    </div>
+
+    <div id="reviewsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Dynamically filled via app.js -->
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-stone-900 text-stone-300 pt-16 pb-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-10">
+      
+      <div class="space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-amber-400 flex items-center justify-center text-stone-900 font-serif font-bold text-xl">L</div>
+          <span class="font-serif text-2xl font-bold text-white">LuxeCraft</span>
+        </div>
+        <p class="text-stone-400 text-sm leading-relaxed">
+          Crafting memories into eternal keepsakes. Premium resin photo plaques, romantic couple LED shadow boxes, and custom photo wall clocks.
+        </p>
+        <div class="pt-2">
+          <button onclick="openAdminModal()" class="text-xs text-amber-300/80 hover:text-amber-200 underline flex items-center gap-1">
+            <i data-lucide="lock" class="w-3.5 h-3.5"></i> Seller Admin Portal Login
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="text-white font-semibold text-sm tracking-wider uppercase mb-4">Collections</h4>
+        <ul class="space-y-2 text-sm text-stone-400">
+          <li><a href="#catalog" onclick="filterCategory('resin')" class="hover:text-amber-300 transition">Floral Resin Art</a></li>
+          <li><a href="#catalog" onclick="filterCategory('couple')" class="hover:text-amber-300 transition">Couple LED Frames</a></li>
+          <li><a href="#catalog" onclick="filterCategory('clock')" class="hover:text-amber-300 transition">Photo Wall Clocks</a></li>
+          <li><a href="#portfolio" class="hover:text-amber-300 transition">Past Creations Gallery</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-white font-semibold text-sm tracking-wider uppercase mb-4">Customer Account</h4>
+        <ul class="space-y-2 text-sm text-stone-400">
+          <li><button onclick="openOrdersModal()" class="hover:text-amber-300 transition">Track Custom Orders</button></li>
+          <li><button onclick="openAuthModal('login')" class="hover:text-amber-300 transition">Customer Sign In</button></li>
+          <li><button onclick="openAuthModal('register')" class="hover:text-amber-300 transition">Create Account</button></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-white font-semibold text-sm tracking-wider uppercase mb-4">Need Help Customizing?</h4>
+        <p class="text-sm text-stone-400 mb-4">Connect with our design artisan directly on WhatsApp for custom size quotes or photo check:</p>
+        <a href="https://wa.me/918789332585?text=Hi%20LuxeCraft%20Team,%20I%20have%20a%20question%20about%20a%20custom%20photo%20gift." target="_blank" 
+           class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition shadow-lg">
+          <i data-lucide="message-circle" class="w-5 h-5"></i>
+          <span>Chat on WhatsApp (+91 87893 32585)</span>
+        </a>
+      </div>
+
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-stone-800 text-xs text-stone-500 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div>© 2026 LuxeCraft Studio. Self-hosted & containerized on VPS.</div>
+      <div class="flex gap-6">
+        <a href="#" class="hover:underline">Privacy Policy</a>
+        <a href="#" class="hover:underline">Terms of Service</a>
+        <a href="#" class="hover:underline">Shipping & Returns</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================== -->
+  <!-- MODAL: CUSTOMER AUTH (LOGIN & REGISTER) (NEW)  -->
+  <!-- ============================================== -->
+  <div id="authModal" class="fixed inset-0 z-50 bg-stone-900/80 backdrop-blur-sm hidden overflow-y-auto flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-stone-100 animate-fade-in my-auto">
+      
+      <div class="px-6 py-4 border-b border-stone-200 flex items-center justify-between bg-stone-50">
+        <div class="flex items-center gap-2">
+          <span class="w-8 h-8 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center">
+            <i data-lucide="user" class="w-4 h-4"></i>
+          </span>
+          <h3 id="authModalTitle" class="font-serif font-bold text-lg text-stone-900">Customer Account</h3>
+        </div>
+        <button onclick="closeAuthModal()" class="p-2 rounded-full hover:bg-stone-200 text-stone-500 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-6">
+        <!-- Auth Tabs -->
+        <div id="authTabsNav" class="flex bg-stone-100 p-1 rounded-xl mb-5 text-xs font-semibold">
+          <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-2 rounded-lg bg-white text-stone-900 shadow-sm transition">
+            Sign In
+          </button>
+          <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-2 rounded-lg text-stone-500 hover:text-stone-800 transition">
+            Register New Account
+          </button>
+        </div>
+
+        <div id="authStatusNotice" class="hidden mb-4 p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-xl font-medium"></div>
+        <div id="authErrorMsg" class="hidden mb-4 p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl font-medium"></div>
+
+        <!-- Login Form -->
+        <form id="loginForm" onsubmit="handleCustomerLogin(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
+              Email Address or Mobile Number
+            </label>
+            <input type="text" id="loginIdentifier" required placeholder="Enter your email or phone (e.g. 8789332585)" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-bold uppercase tracking-wider text-stone-700">Password</label>
+              <button type="button" onclick="switchAuthTab('forgot')" class="text-xs text-brand-600 hover:text-amber-700 font-semibold hover:underline transition">
+                Forgot Password?
+              </button>
+            </div>
+            <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          </div>
+          <button id="loginSubmitBtn" type="submit" class="w-full py-3 rounded-xl gold-gradient-btn text-white font-semibold text-sm shadow-md transition flex items-center justify-center gap-2">
+            <span id="loginBtnText">Sign In & View Orders</span>
+          </button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="registerForm" onsubmit="handleCustomerRegister(event)" class="space-y-4 hidden">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Full Name *</label>
+            <input type="text" id="regName" required placeholder="Pooja Sharma" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          </div>
+
+          <!-- Contact Choice: Phone or Email (Only 1 Mandatory) -->
+          <div class="p-3.5 rounded-2xl bg-amber-50/60 border border-amber-200/90 space-y-2.5">
+            <div class="text-[11px] font-bold text-amber-950 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="phone-call" class="w-3.5 h-3.5 text-amber-700"></i>
+              <span>Contact (Enter Phone OR Email — Only 1 Needed)</span>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-stone-700 mb-1">Mobile / WhatsApp Number</label>
+              <input type="tel" id="regPhone" placeholder="e.g. 87893 32585" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 text-sm bg-white focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            </div>
+
+            <div class="flex items-center gap-2 text-stone-400 text-xs py-0.5">
+              <div class="flex-1 border-t border-stone-200"></div>
+              <span class="font-bold text-[10px] text-stone-500 uppercase tracking-widest">OR</span>
+              <div class="flex-1 border-t border-stone-200"></div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-stone-700 mb-1">Email Address</label>
+              <input type="email" id="regEmail" placeholder="e.g. pooja@gmail.com" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 text-sm bg-white focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Create Password * (Min 6 characters)</label>
+            <input type="password" id="regPassword" required minlength="6" placeholder="••••••••" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          </div>
+          <button id="regSubmitBtn" type="submit" class="w-full py-3 rounded-xl gold-gradient-btn text-white font-semibold text-sm shadow-md transition flex items-center justify-center gap-2">
+            <span id="regBtnText">Create Customer Account</span>
+          </button>
+        </form>
+
+        <!-- Forgot Password Form -->
+        <form id="forgotPasswordForm" onsubmit="handleForgotPassword(event)" class="space-y-4 hidden">
+          <div class="text-center pb-1">
+            <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center mx-auto mb-2 font-bold">
+              <i data-lucide="key-round" class="w-6 h-6"></i>
+            </div>
+            <h4 class="font-serif font-bold text-stone-900 text-base">Reset Your Password</h4>
+            <p class="text-xs text-stone-500 mt-1 max-w-xs mx-auto">
+              Enter your registered email address or mobile number. We will send you a secure link to reset your password.
+            </p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
+              Registered Email or Mobile Number
+            </label>
+            <input type="text" id="forgotIdentifier" required placeholder="e.g. pooja@gmail.com or 8789332585" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          </div>
+
+          <button id="forgotSubmitBtn" type="submit" class="w-full py-3 rounded-xl gold-gradient-btn text-white font-semibold text-sm shadow-md transition flex items-center justify-center gap-2">
+            <i data-lucide="send" class="w-4 h-4"></i>
+            <span id="forgotBtnText">Send Password Reset Link</span>
+          </button>
+
+          <div class="text-center pt-2">
+            <button type="button" onclick="switchAuthTab('login')" class="text-xs text-stone-600 hover:text-stone-900 font-semibold inline-flex items-center gap-1.5 hover:underline">
+              <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+              <span>Back to Sign In</span>
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: SET NEW PASSWORD (AFTER RECOVERY LINK)  -->
+  <!-- ============================================== -->
+  <div id="resetPasswordModal" class="fixed inset-0 z-50 bg-stone-900/80 backdrop-blur-sm hidden overflow-y-auto flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-stone-100 animate-fade-in my-auto">
+      <div class="px-6 py-4 border-b border-stone-200 flex items-center justify-between bg-stone-50">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-amber-500 text-stone-950 flex items-center justify-center font-bold">
+            <i data-lucide="lock" class="w-4 h-4"></i>
+          </div>
+          <h3 class="font-serif font-bold text-lg text-stone-900">Set New Password</h3>
+        </div>
+        <button onclick="closeResetPasswordModal()" class="p-2 rounded-full hover:bg-stone-200 text-stone-500 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="newPasswordForm" onsubmit="handleSetNewPassword(event)" class="p-6 space-y-4">
+        <p class="text-xs text-stone-600 leading-relaxed">
+          Please enter your new password below. Make sure it is at least 6 characters long.
+        </p>
+
+        <div id="resetErrorMsg" class="hidden p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl font-medium"></div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">New Password *</label>
+          <input type="password" id="newPasswordInput" required minlength="6" placeholder="Enter new password (min 6 chars)" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Confirm New Password *</label>
+          <input type="password" id="confirmNewPasswordInput" required minlength="6" placeholder="Re-type new password" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+        </div>
+
+        <button type="submit" id="setNewPasswordBtn" class="w-full py-3.5 rounded-xl gold-gradient-btn text-white font-semibold text-sm shadow-md transition flex items-center justify-center gap-2">
+          <i data-lucide="check-circle" class="w-4 h-4"></i>
+          <span id="setNewPasswordBtnText">Save New Password & Sign In</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: CUSTOMER ORDERS TRACKING (NEW)          -->
+  <!-- ============================================== -->
+  <div id="ordersModal" class="fixed inset-0 z-50 bg-stone-900/80 backdrop-blur-sm hidden overflow-y-auto flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full overflow-hidden border border-stone-100 animate-fade-in my-auto max-h-[88vh] flex flex-col">
+      
+      <div class="px-6 py-4 border-b border-stone-200 flex items-center justify-between bg-stone-50 shrink-0">
+        <div class="flex items-center gap-2">
+          <span class="w-8 h-8 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center">
+            <i data-lucide="package" class="w-4 h-4"></i>
+          </span>
+          <div>
+            <h3 class="font-serif font-bold text-lg text-stone-900">My Custom Orders</h3>
+            <span class="text-xs text-stone-500">Live Crafting & Dispatch Tracking</span>
+          </div>
+        </div>
+        <button onclick="closeOrdersModal()" class="p-2 rounded-full hover:bg-stone-200 text-stone-500 transition">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+      <div id="ordersListContainer" class="p-6 flex-1 overflow-y-auto space-y-6">
+        <!-- Dynamically rendered via app.js -->
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: SELLER ADMIN PORTAL (SAMPLE UPLOADS & ORDERS) -->
+  <!-- ============================================== -->
+  <div id="adminModal" class="fixed inset-0 z-50 bg-stone-900/80 backdrop-blur-sm hidden overflow-y-auto flex items-center justify-center p-3 sm:p-5">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full overflow-hidden border border-stone-100 animate-fade-in my-auto max-h-[92vh] flex flex-col">
+      
+      <!-- Admin Header -->
+      <div class="px-6 py-4 border-b border-stone-200 flex items-center justify-between bg-stone-900 text-white shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-amber-500 text-stone-950 flex items-center justify-center font-bold">
+            <i data-lucide="shield-alert" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-serif font-bold text-lg text-white">Seller Admin Studio</h3>
+            <span class="text-xs text-amber-300">Live Customer Orders, Portfolio & Cloud Database</span>
+          </div>
+        </div>
+        <button onclick="closeAdminModal()" class="p-2 rounded-full hover:bg-stone-800 text-stone-400 hover:text-white transition">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+      <!-- Passcode Unlock Screen (If locked) -->
+      <div id="adminLockScreen" class="p-8 text-center space-y-4">
+        <div class="w-16 h-16 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center mx-auto">
+          <i data-lucide="lock" class="w-8 h-8"></i>
+        </div>
+        <h4 class="font-serif text-2xl font-bold text-stone-900">Protected Seller Area</h4>
+        <p class="text-xs text-stone-500 max-w-sm mx-auto">
+          Enter the administrator passcode to view customer orders, manage sample catalog, and configure database settings.
+        </p>
+        <div class="max-w-xs mx-auto space-y-3">
+          <input type="password" id="adminPasscodeInput" placeholder="Enter Admin Passcode" 
+                 onkeydown="if(event.key==='Enter') unlockAdminPanel()"
+                 class="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-center text-sm font-semibold tracking-widest focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          <button onclick="unlockAdminPanel()" class="w-full py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-semibold text-xs shadow transition">
+            Unlock Admin Panel
+          </button>
+        </div>
+      </div>
+
+      <!-- Unlocked Admin Content -->
+      <div id="adminUnlockedContent" class="hidden flex-1 overflow-y-auto p-6 space-y-6">
+        
+        <!-- Admin Tabs -->
+        <div class="flex flex-wrap bg-stone-100 p-1 rounded-xl text-xs font-semibold gap-1">
+          <button id="adminTabOrdersBtn" onclick="switchAdminTab('orders')" class="flex-1 py-2 px-3 rounded-lg bg-white text-stone-900 shadow-sm transition flex items-center justify-center gap-1.5 font-bold">
+            <i data-lucide="package" class="w-4 h-4 text-amber-600"></i>
+            <span>Customer Orders</span>
+            <span id="adminOrdersCountBadge" class="px-1.5 py-0.2 rounded-full text-[10px] bg-amber-500 text-white font-mono">0</span>
+          </button>
+          <button id="adminTabManageBtn" onclick="switchAdminTab('manage')" class="flex-1 py-2 px-3 rounded-lg text-stone-500 hover:text-stone-800 transition flex items-center justify-center gap-1.5">
+            <i data-lucide="grid" class="w-3.5 h-3.5"></i>
+            <span>Catalog (<span id="adminSamplesCountBadge">6</span>)</span>
+          </button>
+          <button id="adminTabUploadBtn" onclick="switchAdminTab('upload')" class="flex-1 py-2 px-3 rounded-lg text-stone-500 hover:text-stone-800 transition flex items-center justify-center gap-1.5">
+            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+            <span>Add Creation</span>
+          </button>
+          <button id="adminTabDbBtn" onclick="switchAdminTab('database')" class="flex-1 py-2 px-3 rounded-lg text-stone-500 hover:text-stone-800 transition flex items-center justify-center gap-1.5">
+            <i data-lucide="database" class="w-3.5 h-3.5"></i>
+            <span>Cloud DB</span>
+            <span id="adminDbDot" class="w-2 h-2 rounded-full bg-amber-400"></span>
+          </button>
+        </div>
+
+        <!-- Tab 0: Customer Orders Dashboard (Primary) -->
+        <div id="adminOrdersSection" class="space-y-5">
+          <!-- Summary Metric Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="bg-amber-50/70 border border-amber-200/80 p-4 rounded-2xl flex items-center justify-between shadow-xs">
+              <div>
+                <div class="text-[11px] font-bold uppercase tracking-wider text-amber-800">Total Customer Orders</div>
+                <div id="adminMetricTotalOrders" class="text-2xl font-serif font-bold text-stone-900 mt-0.5">0</div>
+              </div>
+              <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold shrink-0">
+                <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+              </div>
+            </div>
+
+            <div class="bg-emerald-50/70 border border-emerald-200/80 p-4 rounded-2xl flex items-center justify-between shadow-xs">
+              <div>
+                <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-800">Total Revenue Booked</div>
+                <div id="adminMetricTotalRevenue" class="text-2xl font-serif font-bold text-stone-900 mt-0.5">₹0</div>
+              </div>
+              <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold shrink-0">
+                <i data-lucide="indian-rupee" class="w-5 h-5"></i>
+              </div>
+            </div>
+
+            <div class="bg-blue-50/70 border border-blue-200/80 p-4 rounded-2xl flex items-center justify-between shadow-xs">
+              <div>
+                <div class="text-[11px] font-bold uppercase tracking-wider text-blue-800">In Active Production</div>
+                <div id="adminMetricActiveOrders" class="text-2xl font-serif font-bold text-stone-900 mt-0.5">0</div>
+              </div>
+              <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold shrink-0">
+                <i data-lucide="clock" class="w-5 h-5"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filter & Action Toolbar -->
+          <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between bg-stone-50 p-3.5 rounded-2xl border border-stone-200">
+            <div class="relative flex-1">
+              <i data-lucide="search" class="w-4 h-4 text-stone-400 absolute left-3.5 top-2.5"></i>
+              <input type="text" id="adminOrderSearchInput" oninput="filterAdminOrders()" placeholder="Search by customer name, phone, email, or #LC-..." 
+                     class="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white">
+            </div>
+
+            <div class="flex items-center gap-2">
+              <select id="adminOrderStatusFilter" onchange="filterAdminOrders()" class="text-xs py-2 px-3 rounded-xl border border-stone-300 bg-white text-stone-700 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <option value="all">All Statuses</option>
+                <option value="1">Step 1: Design Queue</option>
+                <option value="2">Step 2: Mockup Approved</option>
+                <option value="3">Step 3: Resin Pouring / Curing</option>
+                <option value="4">Step 4: Dispatched</option>
+                <option value="5">Step 5: Delivered</option>
+              </select>
+
+              <button type="button" onclick="refreshAdminOrders()" title="Refresh latest orders from Supabase & Storage" 
+                      class="px-3.5 py-2 bg-stone-200 hover:bg-stone-300 text-stone-800 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition">
+                <i data-lucide="refresh-cw" id="adminRefreshIcon" class="w-3.5 h-3.5"></i>
+                <span>Refresh</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Supabase Cloud Sync Tip Banner -->
+          <div class="p-3 bg-amber-50/80 rounded-xl border border-amber-200/80 flex items-center justify-between text-xs gap-3">
+            <div class="flex items-center gap-2 text-stone-700">
+              <i data-lucide="database" class="w-4 h-4 text-brand-600 shrink-0"></i>
+              <span>All customer orders automatically sync to your <strong>Supabase PostgreSQL</strong> table (<code>orders</code>).</span>
+            </div>
+            <a href="https://supabase.com/dashboard/project/adinbayfyrhxwtgqmjpl/editor" target="_blank" class="text-brand-700 font-bold hover:underline shrink-0 flex items-center gap-1 text-[11px]">
+              <span>Supabase Table Editor</span>
+              <i data-lucide="external-link" class="w-3 h-3"></i>
+            </a>
+          </div>
+
+          <!-- Orders List Container -->
+          <div id="adminOrdersContainer" class="space-y-4">
+            <!-- Dynamically populated via renderAdminOrdersList() in app.js -->
+          </div>
+        </div>
+
+        <!-- Tab 1: Upload Form -->
+        <div id="adminUploadSection" class="hidden">
+          <form id="adminUploadForm" onsubmit="handleAdminUpload(event)" class="space-y-5">
+            
+            <!-- Drag & Drop Upload -->
+            <div class="relative border-2 border-dashed border-stone-300 hover:border-brand-500 rounded-2xl p-6 text-center cursor-pointer transition bg-stone-50 hover:bg-amber-50/40 flex flex-col items-center justify-center min-h-[180px]">
+              <input type="file" id="adminSampleFileInput" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="handleAdminFileSelect(event)">
+              
+              <div id="adminUploadPlaceholder" class="flex flex-col items-center justify-center pointer-events-none">
+                <div class="w-12 h-12 rounded-full bg-amber-100 text-brand-700 flex items-center justify-center mb-2">
+                  <i data-lucide="upload-cloud" class="w-6 h-6"></i>
+                </div>
+                <div class="text-sm font-bold text-stone-800">Drag & Drop High-Res Sample Picture Here</div>
+                <div class="text-xs text-stone-500 mt-0.5">Supports JPG, PNG, WEBP (Photo of finished resin / clock)</div>
+              </div>
+
+              <!-- Preview when image chosen -->
+              <div id="adminUploadPreviewContainer" class="hidden relative w-36 h-36 rounded-xl overflow-hidden shadow-md border-2 border-amber-400">
+                <img id="adminUploadPreviewImg" src="" class="w-full h-full object-cover">
+              </div>
+            </div>
+
+            <!-- Title & Category -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Creation Title</label>
+                <input type="text" id="sampleTitleInput" required placeholder="e.g. 12'' Royal Gold Floral Resin Clock" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Category</label>
+                <select id="sampleCategoryInput" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white">
+                  <option value="resin">Resin Keepsake (Flowers/Glitter)</option>
+                  <option value="clock">Photo Wall Clock / Framing Watch</option>
+                  <option value="couple">Romantic Couple LED Frame</option>
+                  <option value="framing">Classic Wood Frame</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- OPTION 1: SELLER ENTERS WHATEVER PRICE THEY WANT -->
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-stone-800 mb-1 flex items-center justify-between">
+                <span>1. Selling Price (₹) <span class="text-amber-600 font-semibold lowercase">• enter whatever price you want</span></span>
+                <span class="text-[11px] text-stone-400 font-normal">Customer will see this price</span>
+              </label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-2.5 text-stone-400 font-bold text-sm">₹</span>
+                <input type="number" id="samplePriceInput" required placeholder="e.g. 1999, 2499, 3499" 
+                       class="w-full pl-8 pr-4 py-2.5 rounded-xl border-2 border-stone-300 text-base font-bold text-stone-900 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none bg-amber-50/20">
+              </div>
+            </div>
+
+            <!-- OPTION 2: IS THIS SAMPLE FOR CUSTOMIZATION OR NOT? -->
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-stone-800 mb-2">
+                2. Is this sample for Customization or Ready to Ship?
+              </label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                
+                <!-- Choice A: Ready to Ship (Not Customized) -->
+                <label id="typeCardReady" class="flex items-start gap-3 p-3.5 rounded-2xl border-2 border-emerald-500 bg-emerald-50/70 cursor-pointer transition shadow-sm">
+                  <input type="radio" name="sampleCustomType" value="ready" checked onchange="updateAdminTypeUI()" class="mt-1 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                  <div>
+                    <div class="text-xs font-bold text-stone-900 flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                      <span>Ready to Ship (NOT Customized)</span>
+                    </div>
+                    <div class="text-[11px] text-stone-600 mt-1 leading-relaxed">
+                      Customer buys this <strong>exact picture</strong> as shown. <strong>No photo upload needed</strong> from customer! Direct 1-Click Add to Cart.
+                    </div>
+                  </div>
+                </label>
+
+                <!-- Choice B: Customizable (With Customer's Photo) -->
+                <label id="typeCardCustom" class="flex items-start gap-3 p-3.5 rounded-2xl border-2 border-stone-200 bg-white hover:border-amber-400 cursor-pointer transition">
+                  <input type="radio" name="sampleCustomType" value="custom" onchange="updateAdminTypeUI()" class="mt-1 text-amber-600 focus:ring-amber-500 cursor-pointer">
+                  <div>
+                    <div class="text-xs font-bold text-stone-900 flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                      <span>Customizable (With Customer's Photo)</span>
+                    </div>
+                    <div class="text-[11px] text-stone-600 mt-1 leading-relaxed">
+                      This is a custom sample. Customer clicks <strong>Customize</strong> to <strong>upload their own photo</strong> and enter custom names.
+                    </div>
+                  </div>
+                </label>
+
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Tags (Comma-separated)</label>
+              <input type="text" id="sampleTagsInput" placeholder="wedding, gold-foil, silent-sweep, in-stock" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            </div>
+
+            <div class="flex items-center gap-3 p-3 bg-stone-50 rounded-xl border border-stone-200">
+              <input type="checkbox" id="sampleFeaturedCheck" class="w-4 h-4 text-brand-600 rounded border-stone-300 focus:ring-brand-500 cursor-pointer">
+              <label for="sampleFeaturedCheck" class="text-xs font-medium text-stone-800 cursor-pointer">
+                Mark as <strong>Featured Creation</strong> on Homepage
+              </label>
+            </div>
+
+            <div class="p-3 bg-emerald-50/80 rounded-xl border border-emerald-200/80 text-xs text-emerald-900 flex items-center gap-2">
+              <i data-lucide="globe" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+              <span><strong>Worldwide Cloud Sync:</strong> This creation will be stored in your Supabase database so customers on any mobile phone, desktop, or tablet worldwide can view it immediately.</span>
+            </div>
+
+            <button type="submit" id="adminUploadSubmitBtn" class="w-full py-3.5 rounded-xl gold-gradient-btn text-white font-semibold text-sm shadow-md transition flex items-center justify-center gap-2">
+              <i data-lucide="cloud-upload" class="w-4 h-4"></i>
+              <span id="adminUploadSubmitBtnText">Publish & Sync to Cloud Database (All Devices)</span>
+            </button>
+
+          </form>
+        </div>
+
+        <!-- Tab 2: Manage Existing Samples -->
+        <div id="adminManageSection" class="hidden space-y-4">
+          <!-- Cloud Database Sync Bar -->
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200/80">
+            <div class="flex items-center gap-2 text-xs text-stone-800">
+              <i data-lucide="database" class="w-4 h-4 text-brand-600 shrink-0"></i>
+              <span><strong>Cloud Database:</strong> Samples sync automatically across all customer devices.</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="syncLocalSamplesToCloud(true)" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-xs flex items-center gap-1.5 shadow-xs transition">
+                <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i>
+                <span>Push Mac Samples to Cloud</span>
+              </button>
+              <button type="button" onclick="syncSamplesFromDatabase()" title="Pull latest from Supabase" class="px-2.5 py-1.5 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-800 text-xs font-semibold flex items-center gap-1 transition">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <div id="adminSamplesList" class="space-y-3">
+            <!-- Dynamically populated via app.js -->
+          </div>
+        </div>
+
+        <!-- Tab 3: Cloud Database Settings (Supabase) -->
+        <div id="adminDbSection" class="hidden space-y-5">
+          <!-- Connection Status Card -->
+          <div id="adminDbStatusCard" class="p-4 rounded-2xl border bg-amber-50/80 border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div id="adminDbStatusIcon" class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold shrink-0">
+                <i data-lucide="database" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <div id="adminDbStatusTitle" class="text-sm font-bold text-stone-900">Database Status: Offline / Local Mode</div>
+                <div id="adminDbStatusDesc" class="text-xs text-stone-600">Connect free Supabase PostgreSQL to sync user logins and orders across all devices.</div>
+              </div>
+            </div>
+            <span id="adminDbStatusBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-amber-200 text-amber-900 shrink-0 self-start sm:self-auto">Local Storage</span>
+          </div>
+
+          <!-- Credentials Form -->
+          <form onsubmit="handleSaveDbSettings(event)" class="space-y-4 bg-stone-50 p-5 rounded-2xl border border-stone-200">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
+                1. Supabase Project URL
+              </label>
+              <input type="url" id="supabaseUrlInput" placeholder="https://your-project-id.supabase.co" 
+                     class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
+                2. Supabase Anon / Public API Key
+              </label>
+              <input type="password" id="supabaseKeyInput" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." 
+                     class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 pt-2">
+              <button type="submit" class="flex-1 py-3 rounded-xl gold-gradient-btn text-white font-semibold text-xs shadow flex items-center justify-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                <span>Save & Connect Database</span>
+              </button>
+              <button type="button" onclick="copySqlSchemaToClipboard()" class="px-4 py-3 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-800 font-semibold text-xs flex items-center justify-center gap-2 transition">
+                <i data-lucide="copy" class="w-4 h-4"></i>
+                <span id="copySqlBtnText">Copy SQL Schema</span>
+              </button>
+            </div>
+          </form>
+
+          <!-- 3-Step Setup Quick Guide -->
+          <div class="p-4 bg-white rounded-2xl border border-stone-200 space-y-3">
+            <h5 class="font-bold text-xs uppercase tracking-wider text-stone-800 flex items-center gap-1.5">
+              <i data-lucide="info" class="w-4 h-4 text-brand-600"></i>
+              <span>Quick 2-Minute Supabase Setup Guide (100% Free):</span>
+            </h5>
+            <ol class="text-xs text-stone-600 space-y-2 list-decimal list-inside leading-relaxed">
+              <li>Sign up for free at <a href="https://supabase.com" target="_blank" class="text-brand-600 font-bold underline">supabase.com</a> and click <strong>New Project</strong>.</li>
+              <li>Under <strong>Project Settings &rarr; API</strong>, copy the <strong>Project URL</strong> and <strong>anon public API Key</strong>, then paste them above.</li>
+              <li>Go to <strong>SQL Editor</strong> in your Supabase dashboard, click the <strong>Copy SQL Schema</strong> button above, paste the code, and click <strong>Run</strong>!</li>
+            </ol>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: LIGHTBOX FULL RESOLUTION VIEW (NEW)     -->
+  <!-- ============================================== -->
+  <div id="lightboxModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4" onclick="closeLightbox()">
+    <div class="max-w-4xl max-h-[90vh] overflow-hidden rounded-3xl bg-stone-900 border border-stone-800 flex flex-col animate-fade-in" onclick="event.stopPropagation()">
+      <div class="relative bg-black flex items-center justify-center max-h-[72vh] overflow-hidden">
+        <img id="lightboxImg" src="" alt="Zoom View" class="w-full max-h-[72vh] object-contain">
+      </div>
+      <div class="p-5 bg-stone-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span id="lightboxCategory" class="text-[10px] font-bold uppercase tracking-widest text-amber-400 bg-amber-950/70 border border-amber-500/30 px-2 py-0.5 rounded-full">Resin Art</span>
+          <h3 id="lightboxTitle" class="font-serif font-bold text-lg text-white mt-1">Sample Title</h3>
+          <p id="lightboxDesc" class="text-xs text-stone-400 mt-0.5">Crafted with UV-resistant crystal clear epoxy.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="lightboxOrderBtn" class="px-5 py-2.5 rounded-xl gold-gradient-btn text-white text-xs font-bold shadow flex items-center gap-1.5">
+            <span>Order Similar Design</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+          <button onclick="closeLightbox()" class="px-4 py-2.5 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-semibold">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: INTERACTIVE CUSTOMIZER STUDIO          -->
+  <!-- ============================================== -->
+  <div id="customizerModal" class="fixed inset-0 z-50 bg-stone-900/80 backdrop-blur-sm hidden overflow-y-auto flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-5xl w-full overflow-hidden border border-stone-100 animate-fade-in my-auto max-h-[92vh] flex flex-col">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-stone-200 flex items-center justify-between bg-stone-50 shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-700">
+            <i data-lucide="sliders" class="w-4 h-4"></i>
+          </span>
+          <div>
+            <h3 id="custModalTitle" class="font-serif font-bold text-lg text-stone-900">Customize Your Keepsake</h3>
+            <span class="text-xs text-stone-500">Live Real-Time Visualizer</span>
+          </div>
+        </div>
+        <button onclick="closeCustomizerModal()" class="p-2 rounded-full hover:bg-stone-200 text-stone-500 transition">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Two Column) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 flex-1 overflow-y-auto">
+        
+        <!-- Left Column: Visualizer Screen -->
+        <div class="lg:col-span-6 p-6 sm:p-8 bg-stone-950 flex flex-col items-center justify-center relative min-h-[380px]">
+          
+          <div class="text-xs text-amber-300/80 font-medium mb-4 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Real-Time Preview</span>
+          </div>
+
+          <div id="customizerFrameContainer" class="relative w-72 h-72 sm:w-80 sm:h-80 transition-all duration-300 flex items-center justify-center">
+            <div id="renderSurface" class="w-full h-full relative overflow-hidden transition-all duration-300 shadow-2xl">
+              
+              <img id="renderImg" src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=800&q=80" 
+                   alt="Customizer Photo" class="w-full h-full object-cover select-none">
+
+              <div id="foilLayer" class="gold-foil-particles"></div>
+              <div id="floralRing" class="absolute inset-0 rounded-full border-[14px] border-amber-100/25 pointer-events-none"></div>
+
+              <div id="clockElements" class="hidden">
+                <div class="clock-center-pin"></div>
+                <div class="clock-hand-hour"></div>
+                <div class="clock-hand-minute"></div>
+                <div class="clock-hand-second"></div>
+                
+                <div class="absolute inset-2 text-stone-800 font-serif font-bold text-xs pointer-events-none drop-shadow-md">
+                  <div class="absolute top-1 inset-x-0 text-center">XII</div>
+                  <div class="absolute right-1 inset-y-0 flex items-center">III</div>
+                  <div class="absolute bottom-1 inset-x-0 text-center">VI</div>
+                  <div class="absolute left-1 inset-y-0 flex items-center">IX</div>
+                </div>
+              </div>
+
+              <div id="inscriptionContainer" class="absolute bottom-6 inset-x-0 text-center px-4 z-20 pointer-events-none">
+                <div id="renderNames" class="font-script text-white text-2xl sm:text-3xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+                  Kabir & Ananya
+                </div>
+                <div id="renderDate" class="text-[11px] font-semibold tracking-widest text-amber-200 uppercase drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] mt-0.5">
+                  Forever & Always • 24.11.2023
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Sample Photos Switcher -->
+          <div class="mt-6 w-full max-w-xs flex items-center justify-between bg-stone-900/80 p-2 rounded-xl border border-stone-800 text-stone-300 text-xs">
+            <span class="text-stone-400 pl-1">Sample Photos:</span>
+            <div class="flex gap-2">
+              <button onclick="setSamplePhoto(0)" class="w-7 h-7 rounded-lg overflow-hidden border border-stone-700 hover:border-amber-400 focus:ring-2 ring-amber-400 transition">
+                <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=100&q=80" class="w-full h-full object-cover">
+              </button>
+              <button onclick="setSamplePhoto(1)" class="w-7 h-7 rounded-lg overflow-hidden border border-stone-700 hover:border-amber-400 focus:ring-2 ring-amber-400 transition">
+                <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=100&q=80" class="w-full h-full object-cover">
+              </button>
+              <button onclick="setSamplePhoto(2)" class="w-7 h-7 rounded-lg overflow-hidden border border-stone-700 hover:border-amber-400 focus:ring-2 ring-amber-400 transition">
+                <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=100&q=80" class="w-full h-full object-cover">
+              </button>
+            </div>
+          </div>
+
+          <div id="ledSwitchContainer" class="mt-3 flex items-center gap-3 bg-stone-900 px-4 py-2 rounded-full border border-stone-800 text-xs hidden">
+            <span class="text-amber-200 flex items-center gap-1.5 font-medium">
+              <i data-lucide="sun" class="w-4 h-4 text-amber-400"></i> Warm LED Glow:
+            </span>
+            <button id="ledToggleBtn" onclick="toggleLedLighting()" class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500 text-stone-950 transition">
+              ON
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Controls -->
+        <div class="lg:col-span-6 p-6 sm:p-8 space-y-6 overflow-y-auto">
+          
+          <!-- Photo Upload -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2">
+              1. Upload Your Photo
+            </label>
+            <div class="relative border-2 border-dashed border-stone-300 hover:border-brand-500 rounded-2xl p-4 text-center cursor-pointer transition bg-stone-50 hover:bg-amber-50/40">
+              <input type="file" id="photoFileInput" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="handlePhotoUpload(event)">
+              <div class="flex flex-col items-center justify-center gap-1.5 pointer-events-none">
+                <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-brand-700">
+                  <i data-lucide="upload-cloud" class="w-5 h-5"></i>
+                </div>
+                <div class="text-sm font-semibold text-stone-800">
+                  Click or drag photo here to upload
+                </div>
+                <div class="text-xs text-stone-500">Supports JPG, PNG, WEBP from mobile or desktop</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Personalization Text -->
+          <div class="space-y-3">
+            <label class="block text-xs font-bold uppercase tracking-wider text-stone-700">
+              2. Personalization Inscription
+            </label>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs text-stone-600 block mb-1">Names / Title:</label>
+                <input type="text" id="inputNames" value="Kabir & Ananya" placeholder="e.g. Rahul & Priya" 
+                       class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm font-medium"
+                       oninput="updateCustomizerText()">
+              </div>
+              <div>
+                <label class="text-xs text-stone-600 block mb-1">Date / Quote:</label>
+                <input type="text" id="inputDate" value="Forever & Always • 24.11.2023" placeholder="e.g. 14th Feb 2024" 
+                       class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm font-medium"
+                       oninput="updateCustomizerText()">
+              </div>
+            </div>
+
+            <!-- Inscription Font Style -->
+            <div>
+              <label class="text-xs text-stone-600 block mb-1">Font Style:</label>
+              <div class="grid grid-cols-3 gap-2">
+                <button onclick="setFontStyle('script')" class="font-style-btn active px-3 py-2 text-xs rounded-xl border border-brand-500 bg-amber-50 font-script text-base text-stone-800 font-bold" data-font="script">
+                  Calligraphy
+                </button>
+                <button onclick="setFontStyle('serif')" class="font-style-btn px-3 py-2 text-xs rounded-xl border border-stone-200 bg-white font-serif text-stone-800 font-bold" data-font="serif">
+                  Luxury Serif
+                </button>
+                <button onclick="setFontStyle('sans')" class="font-style-btn px-3 py-2 text-xs rounded-xl border border-stone-200 bg-white font-sans text-stone-800 font-semibold" data-font="sans">
+                  Modern Clean
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Size Selection -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2">
+              3. Choose Size & Dimensions
+            </label>
+            <div id="custSizeOptions" class="grid grid-cols-3 gap-2.5"></div>
+          </div>
+
+          <!-- Gift Wrap -->
+          <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <i data-lucide="gift" class="w-5 h-5 text-brand-600"></i>
+              <div>
+                <div class="text-xs font-bold text-stone-800">Add Luxury Gift Wrap & Card (+₹149)</div>
+                <div class="text-[11px] text-stone-500">Includes handmade wax-sealed envelope with custom note</div>
+              </div>
+            </div>
+            <input type="checkbox" id="giftWrapCheck" onchange="recalculateCustomPrice()" class="w-4 h-4 text-brand-600 rounded border-stone-300 focus:ring-brand-500 cursor-pointer">
+          </div>
+
+          <!-- Price & Dual Action Buttons -->
+          <div class="pt-4 border-t border-stone-200">
+            <div class="flex items-baseline justify-between mb-4">
+              <div>
+                <span class="text-xs text-stone-500 block">Total Customized Price</span>
+                <div class="flex items-baseline gap-2">
+                  <span id="custFinalPrice" class="font-serif text-3xl font-bold text-stone-900">₹2,299</span>
+                  <span id="custOriginalPrice" class="text-sm text-stone-400 line-through">₹3,499</span>
+                  <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">Save 35%</span>
+                </div>
+              </div>
+              <div class="text-right text-xs text-stone-500">
+                <span class="text-emerald-600 font-medium flex items-center gap-1">
+                  <i data-lucide="truck" class="w-3.5 h-3.5"></i> Free Shipping
+                </span>
+                <span>Dispatch: 3-5 days</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button onclick="addCustomizedItemToCart()" class="w-full py-3.5 rounded-xl gold-gradient-btn text-white font-semibold text-sm shadow-md flex items-center justify-center gap-2">
+                <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                <span>Add to Cart</span>
+              </button>
+              
+              <button onclick="orderDirectOnWhatsApp()" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-md transition flex items-center justify-center gap-2">
+                <i data-lucide="message-circle" class="w-4 h-4"></i>
+                <span>Order via WhatsApp</span>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- SLIDE-OVER CART DRAWER                         -->
+  <!-- ============================================== -->
+  <div id="cartDrawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+    <div id="cartBackdrop" class="absolute inset-0 bg-stone-900/60 backdrop-blur-sm transition-opacity" onclick="closeCartDrawer()"></div>
+
+    <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+      <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+        
+        <div class="p-5 border-b border-stone-200 flex items-center justify-between bg-stone-50">
+          <div class="flex items-center gap-2">
+            <i data-lucide="shopping-bag" class="w-5 h-5 text-brand-600"></i>
+            <h3 class="font-serif font-bold text-lg text-stone-900">Your Shopping Cart</h3>
+          </div>
+          <button onclick="closeCartDrawer()" class="p-2 rounded-full hover:bg-stone-200 text-stone-500 transition">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div id="cartItemsList" class="flex-1 overflow-y-auto p-5 space-y-4"></div>
+
+        <div id="cartFooter" class="p-5 border-t border-stone-200 bg-stone-50 space-y-4">
+          <div class="space-y-2 text-sm text-stone-600">
+            <div class="flex justify-between">
+              <span>Subtotal</span>
+              <span id="cartSubtotal" class="font-bold text-stone-900">₹0</span>
+            </div>
+            <div class="flex justify-between text-xs text-stone-500">
+              <span>Estimated Delivery</span>
+              <span class="text-emerald-600 font-medium">FREE</span>
+            </div>
+            <div class="flex justify-between text-base font-bold text-stone-900 pt-2 border-t border-stone-200">
+              <span>Total Amount</span>
+              <span id="cartTotal" class="font-serif text-xl text-brand-700">₹0</span>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <button onclick="openCheckoutModal()" class="w-full py-3.5 rounded-xl gold-gradient-btn text-white font-semibold text-sm shadow-md flex items-center justify-center gap-2">
+              <i data-lucide="credit-card" class="w-4 h-4"></i>
+              <span>Proceed to Checkout</span>
+            </button>
+            <button onclick="orderAllCartOnWhatsApp()" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm transition flex items-center justify-center gap-2">
+              <i data-lucide="message-circle" class="w-4 h-4"></i>
+              <span>Checkout via WhatsApp</span>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: DIRECT CHECKOUT / PAYMENT MODAL         -->
+  <!-- ============================================== -->
+  <div id="checkoutModal" class="fixed inset-0 z-50 bg-stone-900/80 backdrop-blur-sm hidden overflow-y-auto flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-stone-100 animate-fade-in my-auto">
+      
+      <div class="px-6 py-4 border-b border-stone-200 flex items-center justify-between bg-stone-50">
+        <h3 class="font-serif font-bold text-lg text-stone-900">Delivery & Payment Details</h3>
+        <button onclick="closeCheckoutModal()" class="p-2 rounded-full hover:bg-stone-200 text-stone-500 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="checkoutForm" onsubmit="handlePlaceOrder(event)" class="p-6 space-y-4">
+        
+        <div>
+          <label class="block text-xs font-bold text-stone-700 uppercase mb-1">Full Name</label>
+          <input type="text" id="chkName" required placeholder="e.g. Rahul Sharma" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-stone-700 uppercase mb-1">Phone / WhatsApp</label>
+            <input type="tel" id="chkPhone" required placeholder="+91 98765 43210" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-stone-700 uppercase mb-1">Email</label>
+            <input type="email" id="chkEmail" required placeholder="for order invoice" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-stone-700 uppercase mb-1">Shipping Address</label>
+          <textarea id="chkAddress" required rows="2" placeholder="House / Flat No., Street, Landmark" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none"></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-stone-700 uppercase mb-1">City & State</label>
+            <input type="text" id="chkCity" required placeholder="e.g. Mumbai, Maharashtra" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-stone-700 uppercase mb-1">Pincode</label>
+            <input type="text" id="chkPincode" required placeholder="e.g. 400001" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-stone-700 uppercase mb-2">Payment Method</label>
+          <div class="space-y-2">
+            <label class="flex items-center gap-3 p-3 rounded-xl border border-amber-300 bg-amber-50/50 cursor-pointer">
+              <input type="radio" name="payment" value="upi" checked class="text-brand-600 focus:ring-brand-500">
+              <div class="text-xs">
+                <div class="font-bold text-stone-900">UPI / QR Code / Net Banking (Instant)</div>
+                <div class="text-stone-500">Google Pay, PhonePe, Paytm, BHIM</div>
+              </div>
+            </label>
+            <label class="flex items-center gap-3 p-3 rounded-xl border border-stone-200 hover:bg-stone-50 cursor-pointer">
+              <input type="radio" name="payment" value="card" class="text-brand-600 focus:ring-brand-500">
+              <div class="text-xs">
+                <div class="font-bold text-stone-900">Credit / Debit Card</div>
+                <div class="text-stone-500">Visa, Mastercard, RuPay</div>
+              </div>
+            </label>
+            <label class="flex items-center gap-3 p-3 rounded-xl border border-stone-200 hover:bg-stone-50 cursor-pointer">
+              <input type="radio" name="payment" value="cod" class="text-brand-600 focus:ring-brand-500">
+              <div class="text-xs">
+                <div class="font-bold text-stone-900">Cash on Delivery (₹200 advance deposit for custom items)</div>
+                <div class="text-stone-500">Balance paid upon doorstep arrival</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-stone-200">
+          <button type="submit" class="w-full py-3.5 rounded-xl gold-gradient-btn text-white font-semibold text-base shadow-lg flex items-center justify-center gap-2">
+            <i data-lucide="lock" class="w-4 h-4"></i>
+            <span>Confirm & Place Order</span>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: ORDER SUCCESS CONFIRMATION              -->
+  <!-- ============================================== -->
+  <div id="successModal" class="fixed inset-0 z-50 bg-stone-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center animate-fade-in border border-stone-100">
+      <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4">
+        <i data-lucide="check" class="w-8 h-8"></i>
+      </div>
+      <h3 class="font-serif text-2xl font-bold text-stone-900 mb-2">Order Confirmed!</h3>
+      <p class="text-sm text-stone-600 mb-6 leading-relaxed">
+        Thank you! Your custom keepsake is in our crafting queue. Our artisan will share the digital preview with you on WhatsApp within 24 hours.
+      </p>
+      <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 text-xs text-stone-700 text-left mb-6 space-y-1">
+        <div class="font-bold text-stone-900">Order ID: <span id="successOrderId" class="font-mono text-brand-700">#LC-84920</span></div>
+        <div>Status: <strong>Design Queue (Preview Pending)</strong></div>
+        <div>Estimated Delivery: <strong>3 to 5 business days</strong></div>
+      </div>
+      <div class="space-y-2">
+        <button onclick="sendSuccessOrderToWhatsApp()" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow flex items-center justify-center gap-2 transition">
+          <i data-lucide="message-circle" class="w-4 h-4"></i>
+          <span>Chat on WhatsApp with Artisan (+91 87893 32585)</span>
+        </button>
+        <button onclick="closeSuccessModal(); openOrdersModal();" class="w-full py-2.5 rounded-xl gold-gradient-btn text-white font-semibold text-xs shadow transition">
+          Track This Order in "My Orders"
+        </button>
+        <button onclick="closeSuccessModal()" class="w-full py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 font-medium text-xs transition">
+          Continue Browsing
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: CONFIRMATION POPUP (DAILY UI #9 STYLE)  -->
+  <!-- ============================================== -->
+  <div id="customConfirmModal" class="fixed inset-0 z-[120] bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-[28px] shadow-2xl max-w-sm w-full p-7 text-center relative border border-stone-100 animate-scale-up">
+      <!-- Close X Button -->
+      <button onclick="closeCustomConfirm(false)" class="absolute top-4 right-4 p-1.5 text-stone-400 hover:text-stone-700 rounded-full hover:bg-stone-100 transition">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <!-- Centered Icon Badge with subtle glow -->
+      <div id="confirmModalIconContainer" class="w-14 h-14 rounded-2xl bg-rose-50 text-rose-500 border border-rose-100 flex items-center justify-center mx-auto mb-4 shadow-sm">
+        <i id="confirmModalIcon" data-lucide="alert-triangle" class="w-7 h-7"></i>
+      </div>
+
+      <!-- Title -->
+      <h4 id="confirmModalTitle" class="font-serif text-lg font-bold text-stone-900 mb-1.5">
+        Do you really want to exit the app?
+      </h4>
+
+      <!-- Subtext -->
+      <p id="confirmModalDesc" class="text-xs text-stone-500 leading-relaxed mb-6">
+        All of the unsaved progress would be lost!
+      </p>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-3">
+        <button id="confirmModalYesBtn" onclick="handleConfirmModalAction(true)" 
+                class="flex-1 py-3 px-4 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-semibold text-xs shadow-md shadow-rose-500/20 transition active:scale-95">
+          Yes
+        </button>
+        <button id="confirmModalNoBtn" onclick="closeCustomConfirm(false)" 
+                class="flex-1 py-3 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold text-xs transition active:scale-95">
+          No
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: LUXURY ALERT / SUCCESS POPUP            -->
+  <!-- ============================================== -->
+  <div id="customAlertModal" class="fixed inset-0 z-[120] bg-stone-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-[28px] shadow-2xl max-w-sm w-full p-7 text-center relative border border-stone-100 animate-scale-up">
+      <!-- Close X Button -->
+      <button onclick="closeCustomAlert()" class="absolute top-4 right-4 p-1.5 text-stone-400 hover:text-stone-700 rounded-full hover:bg-stone-100 transition">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <!-- Centered Icon Badge -->
+      <div id="alertModalIconContainer" class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center mx-auto mb-4 shadow-sm">
+        <i id="alertModalIcon" data-lucide="check" class="w-7 h-7"></i>
+      </div>
+
+      <!-- Title -->
+      <h4 id="alertModalTitle" class="font-serif text-lg font-bold text-stone-900 mb-1.5">
+        Success!
+      </h4>
+
+      <!-- Subtext -->
+      <p id="alertModalDesc" class="text-xs text-stone-500 leading-relaxed mb-6">
+        Action completed successfully.
+      </p>
+
+      <!-- Action Button -->
+      <button id="alertModalOkBtn" onclick="closeCustomAlert()" 
+              class="w-full py-3 px-4 rounded-xl gold-gradient-btn text-white font-semibold text-xs shadow transition active:scale-95">
+        Continue
+      </button>
+    </div>
+  </div>
+
+  <!-- Floating WhatsApp Action Button -->
+  <a href="https://wa.me/918789332585?text=Hi%20LuxeCraft,%20I%20would%20like%20to%20order%20a%20custom%20photo%20resin%20keepsake!" 
+     target="_blank"
+     class="fixed bottom-6 right-6 z-40 bg-emerald-500 hover:bg-emerald-600 text-white p-3.5 rounded-full shadow-2xl flex items-center gap-2 transition hover:scale-110 group"
+     title="Chat with us on WhatsApp (+91 87893 32585)">
+    <i data-lucide="message-circle" class="w-7 h-7"></i>
+    <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 ease-in-out text-sm font-semibold pr-1">
+      WhatsApp Support (+91 87893 32585)
+    </span>
+  </a>
+
+  <!-- Scripts -->
+  <script src="products.js"></script>
+  <script src="supabase-config.js"></script>
+  <script src="app.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+/* Custom styles and luxury animations for LuxeCraft Studio */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Great+Vibes&display=swap');
+
+:root {
+  --primary-gold: #c69b4e;
+  --primary-gold-dark: #a1782f;
+  --primary-gold-light: #f4e8c1;
+  --bg-cream: #faf8f5;
+  --accent-rose: #e6b8a2;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--bg-cream);
+  color: #2b2b2b;
+  overflow-x: hidden;
+}
+
+.font-serif {
+  font-family: 'Playfair Display', serif;
+}
+
+.font-script {
+  font-family: 'Great Vibes', cursive;
+}
+
+/* Glassmorphism & Gloss effect for Resin */
+.resin-gloss {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.25), 0 0 25px rgba(198, 155, 78, 0.15);
+}
+
+.resin-gloss::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.1) 40%,
+    transparent 60%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  pointer-events: none;
+  transform: rotate(25deg);
+  transition: transform 0.8s ease;
+}
+
+.resin-gloss:hover::after {
+  transform: rotate(25deg) translateY(-20px);
+}
+
+/* Gold Flakes effect */
+.gold-foil-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(245, 214, 110, 0.7) 0px, rgba(245, 214, 110, 0.7) 2px, transparent 3px),
+    radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.8) 0px, rgba(212, 175, 55, 0.8) 3px, transparent 4px),
+    radial-gradient(circle at 40% 70%, rgba(255, 223, 0, 0.6) 0px, rgba(255, 223, 0, 0.6) 2px, transparent 3px),
+    radial-gradient(circle at 85% 80%, rgba(212, 175, 55, 0.7) 0px, rgba(212, 175, 55, 0.7) 4px, transparent 5px),
+    radial-gradient(circle at 15% 85%, rgba(245, 214, 110, 0.8) 0px, rgba(245, 214, 110, 0.8) 3px, transparent 4px);
+  z-index: 5;
+}
+
+/* LED Warm Glow Effect */
+.led-glow-on {
+  box-shadow: 0 0 35px 8px rgba(255, 214, 138, 0.85), inset 0 0 25px rgba(255, 200, 100, 0.4);
+  border-color: #ffe6a7 !important;
+  transition: all 0.5s ease-in-out;
+}
+
+.led-glow-off {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  transition: all 0.5s ease-in-out;
+}
+
+/* Clock Dial Components */
+.clock-center-pin {
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle, #ffeaa7 0%, #d4af37 100%);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.clock-hand-hour {
+  position: absolute;
+  bottom: 50%;
+  left: calc(50% - 2.5px);
+  width: 5px;
+  height: 28%;
+  background: #222;
+  border-radius: 4px;
+  transform-origin: bottom center;
+  transform: rotate(70deg);
+  z-index: 15;
+  box-shadow: 1px 2px 4px rgba(0,0,0,0.3);
+}
+
+.clock-hand-minute {
+  position: absolute;
+  bottom: 50%;
+  left: calc(50% - 1.5px);
+  width: 3px;
+  height: 42%;
+  background: #333;
+  border-radius: 3px;
+  transform-origin: bottom center;
+  transform: rotate(210deg);
+  z-index: 16;
+  box-shadow: 1px 2px 4px rgba(0,0,0,0.3);
+}
+
+.clock-hand-second {
+  position: absolute;
+  bottom: 50%;
+  left: calc(50% - 0.75px);
+  width: 1.5px;
+  height: 46%;
+  background: #c69b4e;
+  border-radius: 2px;
+  transform-origin: bottom center;
+  transform: rotate(335deg);
+  z-index: 17;
+}
+
+/* Masonry Layout Utilities */
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 1.5rem;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #d4af37;
+  border-radius: 3px;
+}
+
+/* Modal Animations */
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.9) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.gold-gradient-btn {
+  background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+  transition: all 0.3s ease;
+}
+.gold-gradient-btn:hover {
+  background: linear-gradient(135deg, #e5c158 0%, #c99718 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px -5px rgba(184, 134, 11, 0.4);
+}
