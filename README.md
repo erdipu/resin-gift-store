@@ -1,10 +1,14 @@
 # LuxeCraft Studio 💎
 ### Bespoke Resin Art, Keepsakes & Personalized Photo Gifting E-Commerce Store
 
+[![Live Website](https://img.shields.io/badge/Live_Storefront-resin--art--studio.netlify.app-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)](https://resin-art-studio.netlify.app/#catalog)
 [![License: MIT](https://img.shields.io/badge/License-MIT-amber.svg)](LICENSE)
 [![Frontend: Vanilla JS](https://img.shields.io/badge/Frontend-ES6%2B%20%7C%20TailwindCSS-orange.svg)](https://tailwindcss.com/)
 [![Database: Supabase](https://img.shields.io/badge/Database-Supabase%20PostgreSQL-3ECF8E.svg)](https://supabase.com/)
 [![Zero Build](https://img.shields.io/badge/Build-Zero%20Dependency-brightgreen.svg)]()
+
+> 🌐 **Live Website**: [https://resin-art-studio.netlify.app/#catalog](https://resin-art-studio.netlify.app/#catalog)  
+> Experience the live interactive photo customizer and artisan gallery in action!
 
 A high-converting, responsive e-commerce storefront featuring an **Interactive Live Photo Customizer Studio**, real-time **Supabase Cloud Database sync**, customer order tracking, and dual checkout funnels (Direct Online Gateway + WhatsApp Business).
 

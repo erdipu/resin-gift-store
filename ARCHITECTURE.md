@@ -1,6 +1,7 @@
 # Architecture & Technical Design Document
 
-**LuxeCraft Studio** — Bespoke Resin Art & Photo Gifting E-Commerce Platform
+**LuxeCraft Studio** — Bespoke Resin Art & Photo Gifting E-Commerce Platform  
+🔗 **Production Deployment**: [https://resin-art-studio.netlify.app/#catalog](https://resin-art-studio.netlify.app/#catalog)
 
 ---
 
